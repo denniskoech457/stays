@@ -322,7 +322,7 @@ function renderLodges(filter='all'){
   $('#lodgeGrid').innerHTML=list.map(l=>`<article class="lodge-card">
     <div class="lodge-img" style="background-image:url('${l.img}')"><span class="country-pill">${l.country==='USA'?'🇺🇸 United States':'🇦🇪 UAE'}</span></div>
     <div class="lodge-body"><div class="lodge-title-row"><h3>${l.name}</h3><span class="rating">★ ${l.rating}</span></div><div class="location">${l.city}</div>
-    <div class="offer"><div><span>Demo review offer</span><strong>${money(l.offer)}</strong></div><button class="btn btn-primary" onclick="viewLodge('${l.id}')">Review lodge</button></div></div>
+    <div class="offer"><div><span>Review offer</span><strong>${money(l.offer)}</strong></div><button class="btn btn-primary" onclick="viewLodge('${l.id}')">Review lodge</button></div></div>
   </article>`).join('');
 }
 $$('.filter').forEach(b=>b.addEventListener('click',()=>{$$('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderLodges(b.dataset.country)}));
