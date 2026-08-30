@@ -285,6 +285,82 @@ if ($action !== '') {
   .toast{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));text-align:center;padding:12px 14px}
 }
 
+
+/* Mobile lodge modal scrolling fix */
+@media (max-width: 720px){
+  #lodgeModal{
+    align-items:stretch;
+    justify-content:center;
+    padding:0;
+    overflow:hidden;
+  }
+  #lodgeModal .modal-backdrop{position:fixed}
+  #lodgeModal .lodge-modal-card{
+    width:100%;
+    height:100dvh;
+    max-height:100dvh;
+    margin:0;
+    border-radius:0;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable;
+    touch-action:pan-y;
+  }
+  #lodgeModalContent{
+    display:block;
+    min-height:100%;
+    padding-bottom:calc(28px + env(safe-area-inset-bottom));
+  }
+  #lodgeModal .modal-close{
+    position:fixed;
+    top:calc(10px + env(safe-area-inset-top));
+    right:12px;
+    z-index:105;
+    box-shadow:0 4px 16px rgba(0,0,0,.16);
+  }
+  #lodgeModal .modal-lodge-image{
+    height:clamp(170px,31vh,230px);
+    min-height:170px;
+  }
+  #lodgeModal .modal-lodge-body{
+    padding:18px 16px calc(42px + env(safe-area-inset-bottom));
+  }
+  #lodgeModal .modal-lodge-body h2{
+    font-size:clamp(27px,8vw,32px);
+    overflow-wrap:anywhere;
+  }
+  #lodgeModal .modal-lodge-body>p{
+    font-size:14px;
+    line-height:1.6;
+  }
+  #lodgeModal .reward-panel{
+    margin:16px 0;
+    gap:6px;
+  }
+  #lodgeModal .payment-box,
+  #lodgeModal .review-form{
+    width:100%;
+    min-width:0;
+  }
+  #lodgeModal .payment-box h3,
+  #lodgeModal .review-form h3{
+    margin-top:0;
+  }
+  #lodgeModal .payment-box input,
+  #lodgeModal .review-form input,
+  #lodgeModal .review-form textarea{
+    max-width:100%;
+  }
+  #lodgeModal .review-form textarea{
+    min-height:140px;
+  }
+  #lodgeModal .btn-full{
+    min-height:48px;
+  }
+}
+
 @media (max-width: 420px){
   .brand span:last-child{max-width:125px;overflow:hidden;text-overflow:ellipsis}
   .site-header nav .btn{padding:8px 9px;font-size:10px}
