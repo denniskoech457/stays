@@ -26,6 +26,11 @@ if ($action !== '') {
         if (!(error_reporting() & $severity)) {
             return false;
         }
+        // PHP 8.4/8.5 can emit deprecation notices for harmless legacy calls.
+        // Do not turn deprecations into failed API responses.
+        if (in_array($severity, [E_DEPRECATED, E_USER_DEPRECATED], true)) {
+            return true;
+        }
         throw new ErrorException($message, 0, $severity, $file, $line);
     });
 }
@@ -62,7 +67,6 @@ function megapay_post(string $url, array $payload): array {
     $body = curl_exec($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $error = curl_error($ch);
-    curl_close($ch);
     if ($body === false) return ['ok' => false, 'code' => $code, 'data' => [], 'error' => $error ?: 'Gateway connection failed.'];
     $data = json_decode($body, true);
     if (!is_array($data)) {
