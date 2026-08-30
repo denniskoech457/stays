@@ -148,7 +148,7 @@ if ($action !== '') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="LodgeReview Lab - an educational school project demonstrating browser login and M-Pesa STK review unlocking." />
+  <meta name="description" content="LodgeReview" />
   <title>LodgeReview Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,7 +166,7 @@ if ($action !== '') {
   </style>
 </head>
 <body>
-  <div class="demo-banner">School project demo · Review rewards shown are simulated · KES 100 service-charge STK workflow</div>
+  <div class="demo-banner"> · Review and get paid</div>
   <header class="site-header">
     <a class="brand" href="#home" aria-label="LodgeReview Lab home">
       <span class="brand-mark">LR</span>
@@ -185,13 +185,13 @@ if ($action !== '') {
       <div class="hero-copy">
         <span class="eyebrow">Explore · Unlock · Review</span>
         <h1>Discover standout stays across the <em>United States</em> and <em>UAE.</em></h1>
-        <p>Browse fictional lodge profiles built for a classroom STK-integration project. Registered users can unlock one review submission per lodge after a KES 100 service payment.</p>
+        <p>Browse lodges profiles. Registered users can unlock one review submission per lodge after a KES 100 service payment.</p>
         <div class="hero-actions">
           <a href="#lodges" class="btn btn-primary btn-lg">Browse lodges</a>
           <button class="btn btn-soft btn-lg" id="joinBtn">Create account</button>
         </div>
         <div class="stats">
-          <div><strong>12</strong><span>Demo lodges</span></div>
+          <div><strong>12</strong><span> lodges Available</span></div>
           <div><strong>KES 100</strong><span>Unlock fee</span></div>
           <div><strong>2</strong><span>Destinations</span></div>
         </div>
@@ -199,9 +199,9 @@ if ($action !== '') {
       <div class="hero-card">
         <div class="hero-photo"></div>
         <div class="floating-card">
-          <span>Featured demo offer</span>
+          <span>Featured offer</span>
           <strong>KES 2,350</strong>
-          <small>Simulated review reward</small>
+          <small>Review reward</small>
         </div>
       </div>
     </section>
@@ -209,7 +209,7 @@ if ($action !== '') {
     <section id="lodges" class="section">
       <div class="section-head">
         <div>
-          <span class="eyebrow">Curated demo directory</span>
+          <span class="eyebrow">Curated lodges directory</span>
           <h2>Choose a lodge to review</h2>
         </div>
         <div class="filters" role="group" aria-label="Filter lodges">
@@ -224,22 +224,22 @@ if ($action !== '') {
     <section id="how" class="how-section">
       <div class="section-head compact">
         <div>
-          <span class="eyebrow">Classroom payment flow</span>
+          <span class="eyebrow">Payment flow</span>
           <h2>How it works</h2>
         </div>
       </div>
       <div class="steps">
-        <article><span>01</span><h3>Create an account</h3><p>Your demo account is stored locally in this browser for the school project.</p></article>
-        <article><span>02</span><h3>Choose a lodge</h3><p>Select a US or UAE lodge and view its simulated review offer.</p></article>
-        <article><span>03</span><h3>Pay KES 100</h3><p>Enter your M-Pesa number and trigger MegaPay STK Push through the PHP backend.</p></article>
-        <article><span>04</span><h3>Submit your review</h3><p>The review form unlocks only when the payment status returns completed.</p></article>
+        <article><span>01</span><h3>Create an account</h3></article>
+        <article><span>02</span><h3>Choose a lodge</h3></article>
+        <article><span>03</span><h3>Pay KES 100</h3><p>Enter your M-Pesa number and trigger STK Push</p></article>
+        <article><span>04</span><h3>Submit your review</h3><p>The review form unlocks only when the payment status returns completed. Happy Earning!</p></article>
       </div>
     </section>
   </main>
 
   <footer>
-    <div><strong>LodgeReview Lab</strong><p>Educational demonstration only. Not affiliated with the real hotels, resorts, or tourism brands.</p></div>
-    <div>© <span id="year"></span> School Project</div>
+    <div><strong>LodgeReview Lab</strong></div>
+    <div>© <span id="year"></span></div>
   </footer>
 
   <div class="modal" id="authModal" aria-hidden="true">
@@ -259,7 +259,6 @@ if ($action !== '') {
       </form>
       <form id="registerForm" class="form-panel">
         <h3>Create your account</h3>
-        <p>For this demo, account data stays in your browser.</p>
         <label>Full name<input type="text" id="regName" required maxlength="60"></label>
         <label>Email<input type="email" id="regEmail" required autocomplete="email"></label>
         <label>Password<input type="password" id="regPassword" required minlength="6" autocomplete="new-password"></label>
@@ -343,14 +342,14 @@ function userReviewed(lodgeId){const s=session();return !!s&&read(KEYS.reviews).
 function renderLodgeModal(){
  const l=activeLodge,s=session(),unlocked=userUnlocked(l.id),reviewed=userReviewed(l.id);
  let action='';
- if(!s) action=`<div class="payment-box"><h3>Login required</h3><p>Sign in or create a browser-based demo account before paying the KES 100 service charge.</p><button class="btn btn-primary" onclick="closeModal('lodgeModal');openModal('authModal')">Login / Register</button></div>`;
- else if(reviewed) action=`<div class="payment-status success">✓ You have already submitted your demo review for this lodge.</div>`;
+ if(!s) action=`<div class="payment-box"><h3>Login required</h3><p>Sign in or create account before paying the KES 100 service charge.</p><button class="btn btn-primary" onclick="closeModal('lodgeModal');openModal('authModal')">Login / Register</button></div>`;
+ else if(reviewed) action=`<div class="payment-status success">✓ You have already submitted your account review for this lodge.</div>`;
  else if(unlocked) action=reviewFormHtml();
- else action=`<div class="payment-box"><h3>Unlock review for KES 100</h3><p>A real MegaPay STK request can be sent to your M-Pesa phone when the API credentials are configured on the server.</p><form id="paymentForm"><label>M-Pesa phone number<input id="mpesaPhone" placeholder="07XXXXXXXX or 2547XXXXXXXX" required></label><button id="payBtn" class="btn btn-primary btn-full" type="submit">Pay KES 100 & Unlock</button></form><div id="paymentStatus" class="payment-status">No payment started.</div></div>`;
+ else action=`<div class="payment-box"><h3>Unlock review for KES 100</h3><form id="paymentForm"><label>M-Pesa phone number<input id="mpesaPhone" placeholder="07XXXXXXXX or 2547XXXXXXXX" required></label><button id="payBtn" class="btn btn-primary btn-full" type="submit">Pay KES 100 & Unlock</button></form><div id="paymentStatus" class="payment-status">No payment started.</div></div>`;
  $('#lodgeModalContent').innerHTML=`<div class="modal-lodge-image" style="background-image:url('${l.img}')"></div><div class="modal-lodge-body"><span class="eyebrow">${l.country} · ${l.city}</span><h2>${l.name}</h2><div class="modal-meta">★ ${l.rating} · Fictional lodge profile</div><p>${l.desc}</p><div class="reward-panel"><div><span>Simulated review offer</span><br><small>Educational display only — no payout is promised.</small></div><strong>${money(l.offer)}</strong></div>${action}</div>`;
  const pf=$('#paymentForm'); if(pf)pf.onsubmit=startPayment; setupStars(); const rf=$('#reviewForm');if(rf)rf.onsubmit=submitReview;
 }
-function reviewFormHtml(){return `<form id="reviewForm" class="review-form"><h3>Submit your review</h3><p>Your KES 100 payment has been verified. You may now submit one review for this demo lodge.</p><label>Rating<div class="stars-select">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" class="${n<=selectedStars?'on':''}">★</button>`).join('')}</div></label><label>Review title<input id="reviewTitle" required maxlength="80" placeholder="Summarize your experience"></label><label>Your review<textarea id="reviewText" required minlength="20" maxlength="800" placeholder="Write at least 20 characters..."></textarea></label><button class="btn btn-primary btn-full" type="submit">Submit review</button></form>`}
+function reviewFormHtml(){return `<form id="reviewForm" class="review-form"><h3>Submit your review</h3><p>Your KES 100 payment has been verified. You may now submit one review for this lodge.</p><label>Rating<div class="stars-select">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" class="${n<=selectedStars?'on':''}">★</button>`).join('')}</div></label><label>Review title<input id="reviewTitle" required maxlength="80" placeholder="Summarize your experience"></label><label>Your review<textarea id="reviewText" required minlength="20" maxlength="800" placeholder="Write at least 20 characters..."></textarea></label><button class="btn btn-primary btn-full" type="submit">Submit review</button></form>`}
 function setupStars(){$$('.stars-select button').forEach(b=>b.onclick=()=>{selectedStars=Number(b.dataset.star);$$('.stars-select button').forEach(x=>x.classList.toggle('on',Number(x.dataset.star)<=selectedStars))})}
 async function startPayment(e){e.preventDefault();const phone=$('#mpesaPhone').value.trim();const btn=$('#payBtn'),status=$('#paymentStatus');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending STK Push';status.className='payment-status';status.textContent='Contacting payment server…';try{const r=await fetch('index.php?action=initiate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,lodge_id:activeLodge.id,user_id:session().id})});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||'Could not initiate STK Push.');status.textContent=d.demo?d.message:'STK Push sent. Complete payment on your phone; checking status…';if(d.demo){setTimeout(()=>markUnlocked(activeLodge.id,d.transaction_request_id,'DEMO-RECEIPT'),1200);return}pollPayment(d.transaction_request_id)}catch(err){status.className='payment-status error';status.textContent=err.message;btn.disabled=false;btn.textContent='Pay KES 100 & Unlock'}}
 function pollPayment(tx){let tries=0;statusTimer=setInterval(async()=>{tries++;try{const r=await fetch('index.php?action=status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transaction_request_id:tx})});const d=await r.json();const status=$('#paymentStatus');if(d.completed){clearInterval(statusTimer);statusTimer=null;markUnlocked(activeLodge.id,tx,d.receipt||'');return}if(d.failed){clearInterval(statusTimer);statusTimer=null;status.className='payment-status error';status.textContent=d.message||'Payment was not completed.';$('#payBtn').disabled=false;$('#payBtn').textContent='Try payment again';return}status.textContent='Waiting for payment confirmation…'}catch{}if(tries>=20){clearInterval(statusTimer);statusTimer=null;const status=$('#paymentStatus');if(status)status.textContent='Still pending. You can close and reopen this lodge to try again.'}},3000)}
@@ -361,10 +360,10 @@ function showDashboard(){
  const reviews=read(KEYS.reviews).filter(r=>r.userId===s.id),unlocks=read(KEYS.unlocks).filter(u=>u.userId===s.id),withdrawals=read(KEYS.withdrawals).filter(w=>w.userId===s.id);
  const totalEarned=reviews.reduce((sum,r)=>sum+Number(r.offer||0),0),totalWithdrawn=withdrawals.reduce((sum,w)=>sum+Number(w.amount||0),0),available=Math.max(0,totalEarned-totalWithdrawn);
  $('#dashboardContent').innerHTML=`<div class="dash-top"><div><span class="eyebrow">My demo account</span><h2 style="font-family:'Playfair Display';margin:5px 0">${s.name}</h2><div class="modal-meta">${s.email}</div></div><button class="btn btn-outline" id="logoutBtn">Logout</button></div>
- <div class="earnings-grid"><div class="earning-card featured"><span>Available earnings</span><strong>${money(available)}</strong><small>From submitted demo reviews</small></div><div class="earning-card"><span>Total earned</span><strong>${money(totalEarned)}</strong><small>${reviews.length} completed review${reviews.length===1?'':'s'}</small></div><div class="earning-card"><span>Withdrawn</span><strong>${money(totalWithdrawn)}</strong><small>${withdrawals.length} demo withdrawal${withdrawals.length===1?'':'s'}</small></div></div>
- <div class="withdraw-box"><div><h3>Withdraw earnings</h3><p>School-project simulation only. No real payout is sent.</p></div><button class="btn btn-primary" id="withdrawBtn" ${available<=0?'disabled':''}>Withdraw ${money(available)}</button></div>
+ <div class="earnings-grid"><div class="earning-card featured"><span>Available earnings</span><strong>${money(available)}</strong><small>From submitted reviews</small></div><div class="earning-card"><span>Total earned</span><strong>${money(totalEarned)}</strong><small>${reviews.length} completed review${reviews.length===1?'':'s'}</small></div><div class="earning-card"><span>Withdrawn</span><strong>${money(totalWithdrawn)}</strong><small>${withdrawals.length}  withdrawal${withdrawals.length===1?'':'s'}</small></div></div>
+ <div class="withdraw-box"><div><h3>Withdraw earnings</h3></div><button class="btn btn-primary" id="withdrawBtn" ${available<=0?'disabled':''}>Withdraw ${money(available)}</button></div>
  <div class="reward-panel"><div><span>Verified service-charge payments</span><br><small>${unlocks.length} lodge${unlocks.length===1?'':'s'} unlocked at KES 100 each</small></div><strong>${money(unlocks.length*100)}</strong></div>
- <h3>My submitted reviews</h3><div class="review-list">${reviews.length?reviews.map(r=>`<div class="review-item"><h4>${r.lodgeName}</h4><div>★ ${r.rating}/5 · ${new Date(r.createdAt).toLocaleDateString()}</div><p><strong>${escapeHtml(r.title)}</strong></p><p>${escapeHtml(r.text)}</p><small>Earned demo offer: ${money(r.offer)}</small></div>`).join(''):'<div class="empty">No reviews submitted yet. Complete a paid unlock and submit a review to earn its displayed demo offer.</div>'}</div>
+ <h3>My submitted reviews</h3><div class="review-list">${reviews.length?reviews.map(r=>`<div class="review-item"><h4>${r.lodgeName}</h4><div>★ ${r.rating}/5 · ${new Date(r.createdAt).toLocaleDateString()}</div><p><strong>${escapeHtml(r.title)}</strong></p><p>${escapeHtml(r.text)}</p><small>Earned offer: ${money(r.offer)}</small></div>`).join(''):'<div class="empty">No reviews submitted yet. Complete a paid unlock and submit a review to earn offer.</div>'}</div>
  ${withdrawals.length?`<h3 class="history-title">Withdrawal history</h3><div class="withdraw-history">${withdrawals.slice().reverse().map(w=>`<div><span>${new Date(w.createdAt).toLocaleString()}</span><strong>${money(w.amount)}</strong></div>`).join('')}</div>`:''}`;
  $('#logoutBtn').onclick=()=>{localStorage.removeItem(KEYS.session);closeModal('dashboardModal');updateNav();toast('Logged out.')};
  const wb=$('#withdrawBtn');if(wb)wb.onclick=()=>withdrawEarnings(available);
@@ -372,8 +371,8 @@ function showDashboard(){
 }
 function withdrawEarnings(amount){
  const s=session();if(!s||amount<=0)return toast('No earnings available to withdraw.');
- if(!confirm(`Withdraw ${money(amount)} from your demo earnings?`))return;
- const a=read(KEYS.withdrawals);a.push({id:'w_'+Date.now(),userId:s.id,amount,method:'Demo payout',status:'completed',createdAt:new Date().toISOString()});write(KEYS.withdrawals,a);toast(`${money(amount)} demo withdrawal recorded.`);showDashboard();
+ if(!confirm(`Withdraw ${money(amount)} from your earnings?`))return;
+ const a=read(KEYS.withdrawals);a.push({id:'w_'+Date.now(),userId:s.id,amount,method:'payout',status:'completed',createdAt:new Date().toISOString()});write(KEYS.withdrawals,a);toast(`${money(amount)} withdrawal recorded.`);showDashboard();
 }
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 window.closeModal=closeModal;window.openModal=openModal;
