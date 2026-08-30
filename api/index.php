@@ -13,11 +13,31 @@ $config = [
     'status_url'      => 'https://megapay.co.ke/backend/v1/transactionstatus',
 ];
 
+$action = $_GET['action'] ?? '';
+
+if ($action !== '') {
+    // API calls must never emit HTML warnings/notices before JSON.
+    ini_set('display_errors', '0');
+    ini_set('html_errors', '0');
+    error_reporting(E_ALL);
+    ob_start();
+
+    set_error_handler(function ($severity, $message, $file, $line) {
+        if (!(error_reporting() & $severity)) {
+            return false;
+        }
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    });
+}
+
 function json_response(array $data, int $status = 200): void {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code($status);
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
-    echo json_encode($data);
+    echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -45,11 +65,24 @@ function megapay_post(string $url, array $payload): array {
     curl_close($ch);
     if ($body === false) return ['ok' => false, 'code' => $code, 'data' => [], 'error' => $error ?: 'Gateway connection failed.'];
     $data = json_decode($body, true);
-    return ['ok' => $code >= 200 && $code < 300, 'code' => $code, 'data' => is_array($data) ? $data : [], 'error' => ''];
+    if (!is_array($data)) {
+        $preview = trim(strip_tags((string)$body));
+        $preview = preg_replace('/\s+/', ' ', $preview);
+        if (strlen($preview) > 240) {
+            $preview = substr($preview, 0, 240) . '...';
+        }
+        return [
+            'ok' => false,
+            'code' => $code,
+            'data' => [],
+            'error' => 'MegaPay returned a non-JSON response' . ($preview !== '' ? ': ' . $preview : '.'),
+        ];
+    }
+    return ['ok' => $code >= 200 && $code < 300, 'code' => $code, 'data' => $data, 'error' => ''];
 }
 
-$action = $_GET['action'] ?? '';
 if ($action !== '') {
+    try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         json_response(['success' => false, 'completed' => false, 'failed' => true, 'message' => 'Method not allowed'], 405);
     }
@@ -141,6 +174,14 @@ if ($action !== '') {
     }
 
     json_response(['success' => false, 'message' => 'Unknown action.'], 404);
+    } catch (Throwable $e) {
+        json_response([
+            'success' => false,
+            'completed' => false,
+            'failed' => true,
+            'message' => 'Server error: ' . $e->getMessage(),
+        ], 500);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -442,8 +483,22 @@ function renderLodgeModal(){
 }
 function reviewFormHtml(){return `<form id="reviewForm" class="review-form"><h3>Submit your review</h3><p>Your KES 100 payment has been verified. You may now submit one review for this lodge.</p><label>Rating<div class="stars-select">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" class="${n<=selectedStars?'on':''}">★</button>`).join('')}</div></label><label>Review title<input id="reviewTitle" required maxlength="80" placeholder="Summarize your experience"></label><label>Your review<textarea id="reviewText" required minlength="20" maxlength="800" placeholder="Write at least 20 characters..."></textarea></label><button class="btn btn-primary btn-full" type="submit">Submit review</button></form>`}
 function setupStars(){$$('.stars-select button').forEach(b=>b.onclick=()=>{selectedStars=Number(b.dataset.star);$$('.stars-select button').forEach(x=>x.classList.toggle('on',Number(x.dataset.star)<=selectedStars))})}
-async function startPayment(e){e.preventDefault();const phone=$('#mpesaPhone').value.trim();const btn=$('#payBtn'),status=$('#paymentStatus');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending STK Push';status.className='payment-status';status.textContent='Contacting payment server…';try{const r=await fetch('index.php?action=initiate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,lodge_id:activeLodge.id,user_id:session().id})});const d=await r.json();if(!r.ok||!d.success)throw new Error(d.message||'Could not initiate STK Push.');status.textContent=d.demo?d.message:'STK Push sent. Complete payment on your phone; checking status…';if(d.demo){setTimeout(()=>markUnlocked(activeLodge.id,d.transaction_request_id,'DEMO-RECEIPT'),1200);return}pollPayment(d.transaction_request_id)}catch(err){status.className='payment-status error';status.textContent=err.message;btn.disabled=false;btn.textContent='Pay KES 100 & Unlock'}}
-function pollPayment(tx){let tries=0;statusTimer=setInterval(async()=>{tries++;try{const r=await fetch('index.php?action=status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transaction_request_id:tx})});const d=await r.json();const status=$('#paymentStatus');if(d.completed){clearInterval(statusTimer);statusTimer=null;markUnlocked(activeLodge.id,tx,d.receipt||'');return}if(d.failed){clearInterval(statusTimer);statusTimer=null;status.className='payment-status error';status.textContent=d.message||'Payment was not completed.';$('#payBtn').disabled=false;$('#payBtn').textContent='Try payment again';return}status.textContent='Waiting for payment confirmation…'}catch{}if(tries>=20){clearInterval(statusTimer);statusTimer=null;const status=$('#paymentStatus');if(status)status.textContent='Still pending. You can close and reopen this lodge to try again.'}},3000)}
+async function readJsonResponse(response){
+  const raw=await response.text();
+  try{
+    return JSON.parse(raw);
+  }catch(e){
+    const clean=raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    throw new Error(
+      clean
+        ? `Server returned an invalid response: ${clean.slice(0,220)}`
+        : `Server returned an empty response (HTTP ${response.status}).`
+    );
+  }
+}
+
+async function startPayment(e){e.preventDefault();const phone=$('#mpesaPhone').value.trim();const btn=$('#payBtn'),status=$('#paymentStatus');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Sending STK Push';status.className='payment-status';status.textContent='Contacting payment server…';try{const r=await fetch('index.php?action=initiate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,lodge_id:activeLodge.id,user_id:session().id})});const d=await readJsonResponse(r);if(!r.ok||!d.success)throw new Error(d.message||'Could not initiate STK Push.');status.textContent=d.demo?d.message:'STK Push sent. Complete payment on your phone; checking status…';if(d.demo){setTimeout(()=>markUnlocked(activeLodge.id,d.transaction_request_id,'DEMO-RECEIPT'),1200);return}pollPayment(d.transaction_request_id)}catch(err){status.className='payment-status error';status.textContent=err.message;btn.disabled=false;btn.textContent='Pay KES 100 & Unlock'}}
+function pollPayment(tx){let tries=0;statusTimer=setInterval(async()=>{tries++;try{const r=await fetch('index.php?action=status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transaction_request_id:tx})});const d=await readJsonResponse(r);const status=$('#paymentStatus');if(d.completed){clearInterval(statusTimer);statusTimer=null;markUnlocked(activeLodge.id,tx,d.receipt||'');return}if(d.failed){clearInterval(statusTimer);statusTimer=null;status.className='payment-status error';status.textContent=d.message||'Payment was not completed.';$('#payBtn').disabled=false;$('#payBtn').textContent='Try payment again';return}status.textContent='Waiting for payment confirmation…'}catch{}if(tries>=20){clearInterval(statusTimer);statusTimer=null;const status=$('#paymentStatus');if(status)status.textContent='Still pending. You can close and reopen this lodge to try again.'}},3000)}
 function markUnlocked(lodgeId,tx,receipt){const s=session(),a=read(KEYS.unlocks);if(!a.some(x=>x.userId===s.id&&x.lodgeId===lodgeId))a.push({userId:s.id,lodgeId,status:'completed',amount:100,transactionId:tx,receipt,completedAt:new Date().toISOString()});write(KEYS.unlocks,a);toast('Payment verified — review unlocked.');renderLodgeModal()}
 function submitReview(e){e.preventDefault();const s=session(),reviews=read(KEYS.reviews);if(userReviewed(activeLodge.id))return toast('You already reviewed this lodge.');reviews.push({id:'r_'+Date.now(),userId:s.id,userName:s.name,lodgeId:activeLodge.id,lodgeName:activeLodge.name,rating:selectedStars,title:$('#reviewTitle').value.trim(),text:$('#reviewText').value.trim(),offer:activeLodge.offer,createdAt:new Date().toISOString()});write(KEYS.reviews,reviews);toast('Review submitted successfully.');renderLodgeModal()}
 function showDashboard(){
