@@ -396,7 +396,7 @@ if ($action !== '') {
     <section id="home" class="hero">
       <div class="hero-copy">
         <span class="eyebrow">Explore · Unlock · Review</span>
-        <h1>Discover standout stays across the <em>United States</em> and <em>UAE.</em></h1>
+        <h1>Review Lodges in the <em>United States</em> and <em>UAE</em> and Earn to Your M-Pesa</h1>
         <p>Browse lodges profiles. Registered users can unlock one review submission per lodge after a KES 100 service payment.</p>
         <div class="hero-actions">
           <a href="#lodges" class="btn btn-primary btn-lg">Browse lodges</a>
