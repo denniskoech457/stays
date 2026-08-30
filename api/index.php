@@ -163,6 +163,97 @@ if ($action !== '') {
 .earnings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}.earning-card{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fafaf7;display:flex;flex-direction:column;gap:5px}.earning-card.featured{background:#eef6f1;border-color:#d5e7db}.earning-card span{font-size:12px;color:var(--muted);font-weight:700}.earning-card strong{font-size:25px;color:var(--green)}.earning-card small{font-size:11px;color:var(--muted)}.withdraw-box{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px;border:1px solid var(--line);border-radius:16px;margin-bottom:16px}.withdraw-box h3{margin:0 0 4px}.withdraw-box p{margin:0;color:var(--muted);font-size:13px}.withdraw-box .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.history-title{margin-top:28px}.withdraw-history{border:1px solid var(--line);border-radius:14px;overflow:hidden}.withdraw-history div{display:flex;justify-content:space-between;gap:15px;padding:13px 15px;border-bottom:1px solid var(--line);font-size:13px}.withdraw-history div:last-child{border-bottom:0}.withdraw-history span{color:var(--muted)}.withdraw-history strong{color:var(--green)}
 @media(max-width:720px){.earnings-grid{grid-template-columns:1fr}.withdraw-box{align-items:stretch;flex-direction:column}.withdraw-box .btn{width:100%}}
 
+
+
+/* Enhanced responsive/mobile layout */
+@media (max-width: 720px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:15px}
+  .demo-banner{padding:7px 12px;font-size:11px}
+
+  .site-header{height:auto;min-height:64px;padding:10px 14px;gap:10px}
+  .brand{min-width:0;gap:8px;font-size:15px}
+  .brand span:last-child{white-space:nowrap}
+  .brand-mark{flex:0 0 32px}
+  .site-header nav{margin-left:auto;gap:6px;min-width:0}
+  .site-header nav .btn{padding:9px 10px;font-size:11px;white-space:nowrap}
+
+  .hero{min-height:auto;padding:38px 16px 52px;gap:28px}
+  .hero-copy{min-width:0}
+  .hero h1{font-size:clamp(38px,12vw,50px);line-height:1.04;margin:10px 0 16px}
+  .hero-copy>p{font-size:15px;line-height:1.65}
+  .hero-actions{display:grid;grid-template-columns:1fr;gap:10px;margin:22px 0}
+  .hero-actions .btn{width:100%;text-align:center}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:28px}
+  .stats div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;min-width:0}
+  .stats strong{font-size:16px;line-height:1.2}
+  .stats span{font-size:10px;line-height:1.25}
+  .hero-card{width:100%;min-width:0}
+  .hero-photo{height:330px;border-radius:62px 62px 20px 20px}
+  .floating-card{left:12px;right:12px;bottom:12px;min-width:0;width:auto;padding:14px 16px}
+  .floating-card strong{font-size:21px}
+
+  .section,.how-section{padding:54px 16px}
+  .section-head{gap:18px;margin-bottom:26px}
+  .section-head h2,.how-section h2{font-size:clamp(32px,10vw,40px);line-height:1.08}
+  .filters{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .filter{flex:0 0 auto}
+
+  .lodge-grid{gap:16px}
+  .lodge-card{border-radius:18px}
+  .lodge-img{height:210px}
+  .lodge-body{padding:16px}
+  .lodge-title-row h3{font-size:22px}
+  .offer{align-items:stretch;flex-direction:column;gap:12px}
+  .offer button{width:100%;padding:11px 14px}
+
+  .steps{gap:12px}
+  .steps article{padding:20px}
+
+  footer{padding:34px 16px;gap:16px}
+
+  .modal{padding:10px;align-items:flex-end}
+  .modal-card{width:100%;max-height:94dvh;border-radius:20px 20px 0 0;padding:22px 16px calc(20px + env(safe-area-inset-bottom))}
+  .auth-card{padding-top:24px}
+  .lodge-modal-card{width:100%;border-radius:20px 20px 0 0}
+  .modal-lodge-image{height:220px}
+  .modal-lodge-body{padding:20px 16px calc(22px + env(safe-area-inset-bottom))}
+  .modal-lodge-body h2{font-size:30px;line-height:1.1;padding-right:34px}
+  .modal-close{right:12px;top:10px;z-index:3}
+  .form-panel h3{font-size:27px;padding-right:30px}
+  .form-panel input,.payment-box input,.review-form input,.review-form select,.review-form textarea{font-size:16px;padding:13px}
+  .payment-box{padding:16px}
+  .reward-panel{padding:16px}
+  .reward-panel strong{font-size:22px}
+  .stars-select{gap:10px;flex-wrap:wrap}
+  .stars-select button{font-size:31px;min-width:34px;min-height:40px}
+
+  .dashboard-card{width:100%}
+  .dash-top{align-items:flex-start;flex-direction:column;padding-right:38px}
+  .dash-top .btn{width:100%}
+  .earnings-grid{gap:10px}
+  .earning-card{padding:15px}
+  .earning-card strong{font-size:22px}
+  .withdraw-history div{align-items:flex-start;flex-direction:column;gap:4px}
+
+  .toast{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));text-align:center;padding:12px 14px}
+}
+
+@media (max-width: 420px){
+  .brand span:last-child{max-width:125px;overflow:hidden;text-overflow:ellipsis}
+  .site-header nav .btn{padding:8px 9px;font-size:10px}
+  .hero{padding-left:14px;padding-right:14px}
+  .hero h1{font-size:36px}
+  .stats{grid-template-columns:1fr;gap:8px}
+  .stats div{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;padding:11px 13px}
+  .stats span{margin-top:0}
+  .section,.how-section{padding-left:14px;padding-right:14px}
+  .lodge-img{height:195px}
+  .modal{padding:0}
+  .modal-card,.lodge-modal-card{border-radius:18px 18px 0 0}
+  .modal-lodge-image{height:190px}
+}
   </style>
 </head>
 <body>
